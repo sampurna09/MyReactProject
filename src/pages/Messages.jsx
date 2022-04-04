@@ -1,36 +1,52 @@
- import React from 'react'
+import React, { Component } from "react";
+import axios from "axios";
 
+class Messages extends Component {
+  state = {
+    title: "",
+    body: ""
+  };
 
+  onTitleChange = e => {
+    this.setState({
+      title: e.target.value
+    });
+  };
 
-class Messages extends React.Component {
+  onBodyChange = e => {
+    this.setState({
+      body: e.target.value
+    });
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+    const data = {
+      title: this.state.title,
+      body: this.state.body
+    };
+    axios
+      .post("https://jsonplaceholder.typicode.com/posts", data)
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  };
 
-  constructor(props)  {
-    super(props);
-    this.state = {value: ''};
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  render() {
+    return (
+      <div className="post">
+        <form className="post" onSubmit={this.handleSubmit}>
+          <input
+            placeholder="Title" value={this.state.title}
+            onChange={this.onTitleChange} required
+          />
+          <textarea
+            placeholder="Body" value={this.state.body}
+            onChange={this.onBodyChange} required
+          />
+          <button type="submit">Create Post</button>
+        </form>
+      </div>
+    );
   }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
-    event.preventDefault();
-  }
-
-  render() { 
-  return(<div>  
-  <form onSubmit={this.handleSubmit}>
-  <label>
-    Name:
-    <input type="text" name="name" value={this.state.value} onChange={this.handleChange} />
-  </label>
-  <input type="submit" value="Submit" />
-</form></div>) ;
-  }
-};
+}
 
 export default Messages;
