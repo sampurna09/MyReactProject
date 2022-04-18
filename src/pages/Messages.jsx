@@ -1,110 +1,109 @@
-import React, { Component } from "react";
+import React, {useState } from "react";
 import axios from "axios";
+import {ToastContainer, toast} from "react-toastify";
+import{Button} from "reactstrap";
 
-class Messages extends Component {
-  state = {
-    title: "",
-    body: ""
+
+function Message(props){
+  const[agencyCode, setagencyCode]= useState('');
+  const[accountCode, setaccountCode]= useState('');
+  const[code, setCode]= useState('');
+  const [reply, setReply]= useState('');
+
+  const changeagencyCode = (event) => {
+    setagencyCode(event.target.value);
   };
 
-  onTitleChange = e => {
-    this.setState({
-      title: e.target.value
-    });
+  const changeaccountCode = (event) => {
+    setaccountCode(event.target.value);
   };
 
-  onBodyChange = e => {
-    this.setState({
-      body: e.target.value
-    });
+  const changeCode = (event) => {
+    setCode(event.target.value);
   };
-  handleSubmit = e => {
-    e.preventDefault();
-    const data = {
-      title: this.state.title,
-      body: this.state.body
+
+  const transferValue = (event) => {
+    event.preventDefault();
+    const val = {
+      agencyCode,
+      accountCode,
+      code,
     };
+
+  
+
     axios
-      .post("https://jsonplaceholder.typicode.com/posts", data)
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+    .post("http://localhost:8080/tsaNotUpdateToCgas", val)
+    .then(res=>replyResponse(res.data))
+    .catch(err => console.log(err));
+   
+    
+    // props.func(val);
+    // clearState();
   };
 
-  render() {
-    return (
-      <div className="post">
-        <form className="post" onSubmit={this.handleSubmit}>
-          <input
-            placeholder="Title" value={this.state.title}
-            onChange={this.onTitleChange} required
-          />
-          <textarea
-            placeholder="Body" value={this.state.body}
-            onChange={this.onBodyChange} required
-          />
-          <button type="submit">Create Post</button>
-        </form>
-      </div>
-    );
-  }
+const replyResponse = (data) =>{
+  console.log(data)
+ setReply(data); 
 }
-
-export default Messages;
-
-
-
-
-import react from "react";
-import React from "react";
-import UserService from "../service/UserService";
-
-class UserComponent extends react.Component{
-
-constructor() { 
-    super();
-    this.state={
-        users:[]
-    }
-}
-
-componentDidMount(){
-    UserService.getUsers().then((response) => {
-        this.setState({users: response.data});
-    
-});
-}
-
-render(){
-    return(
+  // const clearState = () => {
+  //   setagencyCode('');
+  //   setaccountCode('');
+  //   setCode('');
+  // };
+const tableData = reply;
+console.log(tableData);
+  return (
     <div>
-            <h1 className="text-center">UserList</h1>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <td>user_id</td>
-                        <td>first_name</td>
-                        <td>last_name</td>
-                        <td>phone_number</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.state.users.map(
-                            users =>
-                            <tr key ={users.id}>
-                                <td>{users.id}</td>
-                                <td>{users.firstName}</td>
-                                <td>{users.lastName}</td>
-                                <td>{users.phoneNumber}</td>
+      <label style={{padding:10}}>agencyCode</label>
+      <input type="text" value={agencyCode} onChange={changeagencyCode} />
+      <label style={{padding:10}}>accountCode</label>
+      <input type="text" value={accountCode} onChange={changeaccountCode} />
+      <label style={{padding:10}}>Code</label>
+      <input type="text" value={code} onChange={changeCode} />
+      <Button style={{marginLeft:30}} color="danger" onClick={transferValue}> CHECK STATUS IN CGAS AND TSA</Button>
+      <br />
+    
+      {/* <table {...reply} className="table table-stripped">
+        <thead>
+          <tr >
+            <th>id</th>
+            <th>code</th>
+            <th>accountCode</th>
+            <th>agencyCode</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+        
+            <tr key={reply.id}  >
+                                <td>{reply.id}</td>
+                                <td>{reply.accountCode}</td>
+                                <td>{reply.agencyCode}</td>
+                                <td>{reply.code}</td>
                             </tr>
-                        )
-                    }
-                </tbody>
-            </table>
-    </div>);
+          
+          </tbody>
+      </table> */}
+
+<ul {...reply}>
+       
+        <li>{reply.STATUS1}</li> 
+        <li>{reply.STATUS2}</li> 
+        <li>{reply.STATUS3}</li> 
+        <li>{reply.STATUS4}</li> 
+        <li>{reply.STATUS5}</li> 
+        <li>{reply.STATUS6}</li> 
+        <li>{reply.STATUS7}</li> 
+        <li>{reply.STATUS8}</li> 
+        <li>{reply.STATUS9}</li>  
+     
+   </ul>
+     
+     
+    </div>
+
+  );
+
 }
-}
-
-
-
-export default UserComponent;
+export default Message;
